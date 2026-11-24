@@ -1,4 +1,3 @@
-use vector2::Vector2;
 use raylib::prelude::*;
 mod player;
 
@@ -8,25 +7,35 @@ fn main() {
         .title("Test game")
         .build();
 
+    let mut player = player::Player::new();
+
     rl.set_target_fps(60);
 
     while !rl.window_should_close() {
+        let delta_time: f32 = rl.get_frame_time();
+        let mut direction = Vector2::zero();
+
         if rl.is_key_down(KeyboardKey::KEY_UP) {
-            player::move_character(&Vector2::new(0.0, -1.0));
+            direction.y -= 1.0;
+        }
+
+        if rl.is_key_down(KeyboardKey::KEY_DOWN) {
+            direction.y += 1.0;
         }
 
         if rl.is_key_down(KeyboardKey::KEY_LEFT) {
-            player::move_character(&Vector2::new(-1.0, 0.0));
+            direction.x -= 1.0;
         }
 
         if rl.is_key_down(KeyboardKey::KEY_RIGHT) {
-            player::move_character(&Vector2::new(1.0, 0.0));
+            direction.x += 1.0;
         }
+        
+        player.move_player(direction, delta_time);
 
         let mut d = rl.begin_drawing(&thread);   
 
-        d.clear_background(Color::BLACK);
-        
-        player::draw_player(&mut d, &Vector2::new(320.0, 240.0));
+        d.clear_background(Color::WHITE);
+        player.draw(&mut d);
     }
 }
